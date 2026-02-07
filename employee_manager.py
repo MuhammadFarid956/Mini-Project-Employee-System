@@ -6,8 +6,8 @@ class EmployeesManager:
         self.employees = []
 
     def add_employee(self):
-        print("Enter employee data:")
-        name = input("Enter employee name :")
+        print("\nEnter employee data")
+        name = input("\nEnter employee name :")
         age = input_is_valid("Enter employee age :")
         salary = input_is_valid("Enter employee salary :")
         self.employees.append(Employee(name, age, salary))
