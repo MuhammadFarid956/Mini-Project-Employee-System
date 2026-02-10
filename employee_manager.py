@@ -1,127 +1,82 @@
 import csv
 import os
-from utility import *
-from employees import *
 
 FILENAME = "data_employee.csv"
 
+class Employee:
+    def __init__(self, id_emp, name, age, salary):
+        self.id = id_emp
+        self.name = name
+        self.age = int(age)
+        self.salary = float(salary)
+    
+    def to_list(self):
+        return [self.id, self.name, self.age, self.salary]
+    
+    def __str__(self):
+        return f"{self.id:<10} | {self.name:<20} | {self.age:<5} | Rp {self.salary:<10.2f}"
+    
 class EmployeesManager:
     def __init__(self):
-        self.employees = {}
+        self.employees = []
+        self.load_data()
 
-        try:
-            with open(FILENAME, 'r') as file:
-                reader = csv.reader(file)
-                for row in reader:
-                    id_employee = row[0]
-                    name = row[1]
-                    age = row[2]
-                    salary = row[3]
-
-                    # Save employe to dictionary
-                    self.employees[id_employee] = {'name': name, 'age': age, 'salary': salary}
-        except FileNotFoundError:
-            print("File not found.")
-
-    def gen_id_emp(self):
-        last_id = 0
-        try:
-            with open(FILENAME, 'r') as file:
-                reader = csv.reader(file)
-                for row in reader:
-                    code = row[0]
-                    if code.startswith('EMP'):
-                        num = int(code[3:])
-                        if num > last_id:
-                            last_id = num
-        except FileNotFoundError:
-            pass
-        return f'EMP{last_id + 1:03d}'
-
-    def list_employees(self):
-        print("\n--- Employee List ---")
+    def load_data(self):
         if not os.path.exists(FILENAME):
-            print("\nEmployee list is empty.\n")
-            return
-        with open(FILENAME, 'r') as file:
-            reader = csv.reader(file)
-            print(f"{'ID' : <8} | {'Name' : <20} | {'Age' : <5} | {'Salary' : >10}")
-            print("-" * 50)
-            for row in reader:
-                print(f"{row[0] : <8} | {row[1] : <20} | {row[2] : <5} | RP {int(row[3]) :,}")
-
-    def add_employee(self):
-        id_employee = self.gen_id_emp()
-        name = input("\nEnter employee name :")
-        age = input_is_valid("Enter employee age :")
-        salary = input_is_valid("Enter employee salary :")
-
-        with open(FILENAME, 'a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow([id_employee, name, age, salary])
-        print(f"\nEmployee {name} added with ID {id_employee}.\n")
-    
-    def update_employee(self):
-        print("--- Update Data Employee ---")
-        self.list_employees()
-
-        id_target = input("\nEnter the ID of the employee to update: ")
-
-        temporary_data = []
-        found = False
-
-        try:
-            with open(FILENAME, 'r') as file:
-                reader = csv.reader(file)
-                for row in reader:
-                    if row[0] == id_target:
-                        print(f"Old Data:\nName: {row[1]}\nAge: {row[2]}\nSalary: {row[3]}\n")
-                        print("Enter new data (Leave blank to keep current value)")
-                        new_age = input_is_valid("New Age: ")
-                        new_salary = input_is_valid("New Salary: ")
-
-                        # logic if new data is blank, keep old data
-                        if new_age > 0:
-                            row[2] = new_age
-                        if new_salary > 0:
-                            row[3] = new_salary
-                        found = True
-                        print("EmpLoyee data updated seccessfully.")
-                    
-                    temporary_data.append(row)
-        except FileNotFoundError:
-            print("File not found.")
             return
         
-        if found:
+        try:
+            with open(FILENAME, 'r') as file:
+                reader = csv.reader(file)
+                self.employees = [Employee(*row) for row in reader if row]
+
+        except Exception as e:
+            print(f"Error loading data: {e}")
+
+    def save_data(self):
+        try:
             with open(FILENAME, 'w', newline='') as file:
                 writer = csv.writer(file)
-                writer.writerows(temporary_data)
-            print("File CSV updated successfully.")
-        else:
-            print("Error: Employee ID not found.")
-
-
-    def delete_employees_with_age(self, age_from, age_to):
-        for emp in self.employees:
-            if age_from <= emp.age <=age_to:
-                print(f"Deleting employee: {emp.name}")
-                self.employees.remive(emp)
+                writer.writerows([emp.to_list() for emp in self.employees])
+        except Exception as e:
+            print(f"Error saving data: {e}")
+            
+    def gen_id(self):
+        if not os.path.exists(FILENAME):
+            return 'EMP001'
+        last_id = self.employees[-1].id
+        num = int(last_id.replace("EMP", "")) + 1
+        return f"EMP{num:03d}"
     
-    def find_employee_by_name(self, name):
-        for emp in self.employees: 
-            if emp.name == name:
-                return emp
-            return None
-        
-    def update_salary_by_name(self, name, salary):
-        emp = self.find_employee_by_name(name)
-        if emp is None:
-            print("Error: No employee found!")
-        else:
-            emp.salary = salary
-            print(f"EMployee {name}'s salary updated to {salary}.")
+    # --- CRUD OPERATIONS ---
+    def add_employee(self, name, age, salary):
+            new_id = self.gen_id()
+            new_emp = Employee(new_id, name, age, salary)
+            self.employees.append(new_emp)
+            self.save_data()
+            return new_emp 
 
+    def find_by_id(self, id_target):
+        return next((emp for emp in self.employees if emp.id == id_target), None)
+    
+    def update_employee(self, id_target, name=None, age=None, salary=None):
+        emp = self.find_by_id(id_target)
+        if emp:
+            if name: emp.name = name
+            if age: emp.age = int(age)
+            if salary: emp.salary = float(salary)
+            self.save_data()
+            return True
+        return False
+
+    def delete_emp(self, id_target):
+        emp = self.find_by_id(id_target)
+        if emp:
+            self.employees.remove(emp)
+            self.save_data()
+            return True
+        return False
+    
 if __name__ == "__main__":
     manager = EmployeesManager()
-    manager.list_employees()
+    manager.add_employee("Mbappe", 30, 4000000 )
