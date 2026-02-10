@@ -77,6 +77,3 @@ class EmployeesManager:
             return True
         return False
     
-if __name__ == "__main__":
-    manager = EmployeesManager()
-    manager.add_employee("Mbappe", 30, 4000000 )
