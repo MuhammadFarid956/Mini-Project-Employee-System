@@ -5,3 +5,6 @@ if __name__ == "__main__":
     manager = EmployeesManager()
     app = AppUI(manager)
     app.run()
+
+if __name__ == "__main__":
+    manager = EmployeesManager()
