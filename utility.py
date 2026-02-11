@@ -11,3 +11,11 @@ def input_is_valid(msg, start=0, end=None):
                 return int(inp)
         else:
             return int(inp)
+        
+def input_not_empty(msg):
+    while True:
+        inp = input(msg).strip()
+        if inp:
+            return inp
+        else:
+            print("Input cannot be empty!")

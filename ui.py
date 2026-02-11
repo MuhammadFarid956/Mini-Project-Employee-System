@@ -4,7 +4,7 @@ from employee_manager import *
 
 class AppUI:
     def __init__(self, manager):
-        self.manager = EmployeesManager()
+        self.manager = manager
         
     def clear_screen(self):
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -46,7 +46,7 @@ class AppUI:
     # --- CRUD OPERATION HANDLERS ---
     def menu_add(self):
         print("\n[ ADD NEW EMPLOYEE]")
-        name = input("Enter Name : ")
+        name = input_not_empty("Enter Name : ")
         age = input_is_valid("Enter Age : ")
         salary = input_is_valid("Enter salary : ")
 

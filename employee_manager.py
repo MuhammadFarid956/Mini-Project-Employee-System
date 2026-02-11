@@ -42,11 +42,18 @@ class EmployeesManager:
             print(f"Error saving data: {e}")
             
     def gen_id(self):
-        if not os.path.exists(FILENAME):
+        if not self.employees:
             return 'EMP001'
         last_id = self.employees[-1].id
-        num = int(last_id.replace("EMP", "")) + 1
+        num = int(last_id[3:]) + 1
         return f"EMP{num:03d}"
+
+
+        # if not os.path.exists(FILENAME):
+        #     return 'EMP001'
+        # last_id = self.employees[-1].id
+        # num = int(last_id.replace("EMP", "")) + 1
+        # return f"EMP{num:03d}"
     
     # --- CRUD OPERATIONS ---
     def add_employee(self, name, age, salary):
