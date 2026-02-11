@@ -5,7 +5,7 @@ from employee_manager import *
 class AppUI:
     def __init__(self, manager):
         self.manager = EmployeesManager()
-
+        
     def clear_screen(self):
         os.system('cls' if os.name == 'nt' else 'clear')
     
@@ -18,7 +18,7 @@ class AppUI:
 
     def header_table(self):
         print("\n" + "-"*65)
-        print(f"{'ID':<5} | {'Name':<20} | {'Age':<5} | {'Salary':<15}")
+        print(f"{'ID':<10} | {'Name':<20} | {'Age':<5} | {'Salary':<15}")
         print("-"*65)
 
     def run(self):

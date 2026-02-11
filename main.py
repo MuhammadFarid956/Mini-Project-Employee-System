@@ -1,4 +1,4 @@
-from employee_manager import EmployeesManager, Employee
+from employee_manager import EmployeesManager
 from ui import AppUI
 
 if __name__ == "__main__":

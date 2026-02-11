@@ -14,7 +14,7 @@ class Employee:
         return [self.id, self.name, self.age, self.salary]
     
     def __str__(self):
-        return f"{self.id:<10} | {self.name:<20} | {self.age:<5} | Rp {self.salary:<10.2f}"
+        return f"{self.id:<10} | {self.name:<20} | {self.age:<5} | Rp {self.salary:<15,.2f}"
     
 class EmployeesManager:
     def __init__(self):
